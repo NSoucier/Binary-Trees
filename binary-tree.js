@@ -23,7 +23,7 @@ class BinaryTree {
     // Nov1-Feb1
     // employer needs to state any breaks to UCIS, they advise adding that unpaid maternity time back on
     function getMinDepth(node, depth = 0) {
-      if (!node) {return depth;}
+      if (!node) return depth;
 
       depth++;
 
@@ -41,11 +41,11 @@ class BinaryTree {
 
   maxDepth() {
     function getMaxDepth(node, depth = 0) {
-      if (!node) {return depth;}
+      if (!node) return depth;
 
       depth++;
 
-      if (!node.left || !node.right) {return depth;}
+      if (!node.left || !node.right) return depth;
 
       return Math.max(getMaxDepth(node.left, depth), getMaxDepth(node.right, depth))
 
@@ -58,27 +58,43 @@ class BinaryTree {
    * The path doesn't need to start at the root, but you can't visit a node more than once. */
 
   maxSum() {
-    function getSum(node, depth = 0) {
-      if (!node) {return depth;}
-
-      depth += node.val;
-
-      if (!node.left || !node.right) {return depth;}
-
-      return getSum(node.left, depth) + getSum(node.right, depth)
-
+    let sum = 0;
+    function getSum(node) {
+      if (!node) return 0;
+      const leftSum = getSum(node.left);
+      const rightSum = getSum(node.right);
+      sum = Math.max(sum, node.val + leftSum + rightSum);
+      return Math.max(0, node.val + leftSum, node.val + rightSum);
     }
 
-    let rootVal = this.root? this.root.val : 0;
-
-    return getSum(this.root) - rootVal
+    getSum(this.root)
+    
+    return sum
   }
 
   /** nextLarger(lowerBound): return the smallest value in the tree
    * which is larger than lowerBound. Return null if no such value exists. */
 
   nextLarger(lowerBound) {
+    let result = null;
+    let stack = [this.root];
 
+    while (stack.length && this.root) {
+      let current = stack.pop();
+
+      if (current.val > lowerBound) {
+        if (!result) {
+          result = current.val;
+        } else if (current.val < result) {
+          result = current.val;
+        }
+      }
+
+      if (current.left) stack.push(current.left);
+      if (current.right) stack.push(current.right);
+    }
+
+    return result
   }
 
   /** Further study!
